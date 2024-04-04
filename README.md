@@ -38,5 +38,5 @@ The Easy Shop Manager System Editor is compatible with Unity versions 2020, 2021
 
 ## Contributions and Feedback
 
-Contributions and feedback are welcome! If you encounter any issues, have suggestions for improvements, or would like to contribute to the project, feel free to [link to the GitHub repository].
+Contributions and feedback are welcome! If you encounter any issues, have suggestions for improvements, or would like to contribute to the project, feel free to (https://github.com/MedFarouk-ops/UnityMinimalShopSystem).
 
