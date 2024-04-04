@@ -9,4 +9,5 @@ public class ShopElement : ScriptableObject
     public int price;
     public GameObject shopElementPrefab;
     public bool isBought; // Boolean variable to track whether the element is bought or not
+    public bool isSelected; // Boolean variable to track whether the element is selected or not
 }

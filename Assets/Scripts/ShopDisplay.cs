@@ -18,12 +18,14 @@ public class ShopDisplay : MonoBehaviour
     {
         currentCoins = PlayerPrefs.GetInt("Money", 5000);
         LoadBoughtStatus(); // Load the bought status of shop elements at the start of the scene
+        LoadSelectStatus(); // Load the select status of shop elements at the start of the scene
         DisplayShopElement(currentElementIndex);
         previousButton.onClick.AddListener(ShowPreviousElement);
         nextButton.onClick.AddListener(ShowNextElement);
         buyButton.onClick.AddListener(BuyCurrentElement);
         selectButton.onClick.AddListener(SelectCurrentElement);
     }
+
 
     void ShowPreviousElement()
     {
@@ -55,6 +57,7 @@ public class ShopDisplay : MonoBehaviour
             int newCoins = currentCoins - currentShopElement.price;
             PlayerPrefs.SetInt("Money", newCoins);
             PlayerPrefs.SetInt(currentShopElement.elementName + "_Bought", 1); // Save the bought status using PlayerPrefs
+            currentShopElement.isBought = true; // Update the isBought status of the current element
             CoinAmountScript.instance.coinAmount = newCoins;
             buyButton.interactable = false; // Disabling buy button after purchase
             selectButton.gameObject.SetActive(true); // Enabling select button after purchase
@@ -78,16 +81,17 @@ public class ShopDisplay : MonoBehaviour
         Debug.Log(PlayerPrefs.GetInt(currentShopElement.elementName + "_Bought", 0));
         Debug.Log(currentShopElement.elementName);
         // Check if the item is already bought
-        if (PlayerPrefs.GetInt(currentShopElement.elementName + "_Bought", 0) == 1)
+        if (currentShopElement.isBought)
         {
             // If bought, disable buy button and enable select button
-            buyButton.interactable = false;
-            selectButton.gameObject.SetActive(true);
+            buyButton.gameObject.SetActive(false);
+            selectButton.interactable = !currentShopElement.isSelected; // Enable select button if not already selected
         }
         else
         {
             // If not bought, enable buy button and disable select button
-            buyButton.interactable = true;
+            buyButton.gameObject.SetActive(true);
+            buyButton.interactable = true; // Disabling buy button after purchase
             selectButton.gameObject.SetActive(false);
         }
     }
@@ -104,16 +108,42 @@ public class ShopDisplay : MonoBehaviour
         }
     }
 
+    void LoadSelectStatus()
+    {
+        int selectedIndex = PlayerPrefs.GetInt("SelectedElement", -1); // Load the index of the selected element
+
+        foreach (ShopElement element in shopSystem.shopElements)
+        {
+            if (element.isSelected)
+            {
+                element.isSelected = false; // Unselect all elements first
+            }
+        }
+
+        if (selectedIndex >= 0 && selectedIndex < shopSystem.shopElements.Count)
+        {
+            shopSystem.shopElements[selectedIndex].isSelected = true; // Select the element with the loaded index
+        }
+    }
+
+
     void SelectCurrentElement()
     {
-        // Implement your select logic here
-        // For example, update game state to indicate the current element is selected
+        // Unselect all other elements
+        foreach (ShopElement element in shopSystem.shopElements)
+        {
+            element.isSelected = false;
+        }
+
+        ShopElement currentShopElement = shopSystem.shopElements[currentElementIndex];
+        currentShopElement.isSelected = true; // Mark the current element as selected
         PlayerPrefs.SetInt("SelectedElement", currentElementIndex);
+        selectButton.interactable = false; // Disable select button after selection
     }
+
 
     public int GetCurrentElementIndex()
     {
         return currentElementIndex;
     }
-
 }
